@@ -9,6 +9,7 @@ namespace DataAccess.Concrete.InMemory
     public class InMemoryProductDal : IProductDal // önce using i ekle sonra implement interface de.
     {
         List<Product> _products;
+
         public InMemoryProductDal() //ctor yaz 2 kez taba a tıkla
         {
             _products = new List<Product> {
