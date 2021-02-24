@@ -2,6 +2,7 @@
 using Entities.Concrete;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace DataAccess.Concrete.InMemory
@@ -10,6 +11,7 @@ namespace DataAccess.Concrete.InMemory
     {
         List<Product> _products;
 
+     
         public InMemoryProductDal() //ctor yaz 2 kez taba a tıkla
         {
             _products = new List<Product> {
@@ -28,20 +30,25 @@ namespace DataAccess.Concrete.InMemory
 
         public void Delete(Product product)
         {
-            //_products.Remove(product); //yazarsan referans tip olduğu için silinmez
+            //_products.Remove(product); //yazarsan referans tip olduğu için silinmez.
 
             //bir ürünü silerken primary key kullanılır.(ıd)
 
-            Product productToDelete;
-            foreach (var p in _products)
-            {
-                if(product.ProductId== p.ProductId)
-                {
-                    productToDelete = p;
-                }
-            }
-        }
+            //Product productToDelete= null;      
+            //foreach (var p in _products)     //eğer linq (language integrated query) bilmiyorsan foreach ile dolaş,
+            //{
+            //    if(product.ProductId== p.ProductId)
+            //    {
+            //        productToDelete = p;
+            //    }
+            //}
 
+            //_products.Remove(productToDelete); //null yazmazsan burası hata verir çünkü şuan referansı yok.
+
+            // LINQ ile yazarsak;
+            Product productToDelete = _products.SingleOrDefault(p=>p.ProductId == product.ProductId); // ampulden Linq e tıkla. 
+            _products.Remove(productToDelete);
+        }
         public List<Product> GetAll()
         {
             return _products;
@@ -49,7 +56,19 @@ namespace DataAccess.Concrete.InMemory
 
         public void Update(Product product)
         {
-            throw new NotImplementedException();
+     
+            // gönderdiğim ürün id'sine sahip listedeki ürünü bul.
+            Product productToUpdate = _products.SingleOrDefault(p => p.ProductId == product.ProductId);
+            productToUpdate.ProductName = product.ProductName;
+            productToUpdate.CategoryId = product.CategoryId;
+            productToUpdate.UnitPrice = product.UnitPrice;
+            productToUpdate.UnitsInStock = product.UnitsInStock;
+       
+        
+        }
+        public List<Product> GetAllByCategory(int categoryId)
+        {
+            return _products.Where(p => p.CategoryId == categoryId).ToList();  // şarta uygun tüm elemanları liste yapıp döndürür.
         }
     }
 }
